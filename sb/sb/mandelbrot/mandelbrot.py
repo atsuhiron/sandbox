@@ -19,7 +19,7 @@ def format_float(val: float) -> str:
 
 class StaticParams:
     repeat = 255
-    center = np.array([-0.13997576390625, 0.650401699609375])
+    center = np.array([0.00332150318384375, 0.8423827224726562])
     resolution = 2 ** 10
     chunk_size = 2 ** 8
     frame_num = 30*10  # 30 FPS * 5 sec
@@ -28,7 +28,7 @@ class StaticParams:
     path_imgs = path_base + "images/" + sess_name + "/"
     path_array = path_base + "arrays/" + sess_name + ".npy"
     img_name_template = path_imgs + "fig_{:0>5}.png"
-    _tmp_range = 0.000000002
+    _tmp_range = 0.000000001
 
     @classmethod
     def get_arr_shape(cls) -> Tuple[int, int, int]:
@@ -40,7 +40,9 @@ class UtilCalc:
     def calc_shift(new_center: np.ndarray) -> np.ndarray:
         pixel_shift = (new_center - StaticParams.resolution/2) * np.array([1, -1])
         coord_shift = pixel_shift * StaticParams._tmp_range / StaticParams.resolution * 2
-        return StaticParams.center + coord_shift
+        new_center_coord = StaticParams.center + coord_shift
+        print("{}, {}".format(*new_center_coord))
+        return new_center_coord
 
 
 def _recurrence(xy: np.ndarray, a: float, b: float) -> np.ndarray:
@@ -135,16 +137,21 @@ def reset_dir(path: str):
 
 if __name__ == "__main__":
     __spec__ = "ModuleSpec(name='builtins', loader=<class '_frozen_importlib.BuiltinImporter'>)"
+    pool = Pool(10)
+
     reset_dir(StaticParams.path_imgs)
-    pool = Pool(12)
     result_array = np.zeros(StaticParams.get_arr_shape(), dtype=np.uint8)
-    scales = np.logspace(np.log10(0.000000002), np.log10(2), StaticParams.frame_num)[::-1]
+    scales = np.logspace(np.log10(0.000000001), np.log10(2), StaticParams.frame_num)[::-1]
     for ii in range(StaticParams.frame_num):
         fields = gen_field(scales[ii], StaticParams.center, StaticParams.resolution)
         res_let = calc_set_unordered(pool, ii, *fields)
         save_fig(res_let, StaticParams.img_name_template.format(ii), scales[ii])
         result_array[ii] = res_let
-        break
-
-    np.save(StaticParams.path_array, result_array)
     pool.close()
+    np.save(StaticParams.path_array, result_array)
+
+    # fields = gen_field(StaticParams._tmp_range, StaticParams.center, StaticParams.resolution)
+    # res_let = calc_set_unordered(pool, 1, *fields)
+    # pool.close()
+    # plt.imshow(res_let)
+    # plt.show()
