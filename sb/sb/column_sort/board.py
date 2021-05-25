@@ -5,6 +5,7 @@ import collections
 
 from sb.column_sort.color import EColors
 from sb.column_sort.column import Column
+from sb.column_sort.MoveType import MoveType
 
 
 class Board:
@@ -13,6 +14,7 @@ class Board:
         if columns:
             self.set_board(columns)
         self._check_can_move = True
+        self.move_type_from_parent: MoveType = MoveType.NONE
 
     def initial_check(self):
         all_elements = []
@@ -53,10 +55,31 @@ class Board:
         self.columns = [Column(col) for col in input_columns]
 
     def list_up_all_movable_pair(self) -> List[Tuple[int, int]]:
-        return [(from_index, to_index) for from_index, to_index in itertools.permutations(range(len(self)), 2) if self.can_move(from_index, to_index)]
+        return [(from_index, to_index) for from_index, to_index in itertools.permutations(range(len(self)), 2) if
+                self.can_move(from_index, to_index)]
+
+    def list_up_all_move_type(self, movable_list: List[Tuple[int, int]]) -> List[MoveType]:
+        return [self._judge_move_type(to_index) for _, to_index in movable_list]
+
+    def set_move_type_from_parent(self, move_type: MoveType):
+        self.move_type_from_parent = move_type
+
+    def get_move_type(self) -> MoveType:
+        return self.move_type_from_parent
 
     def is_end(self) -> bool:
         return all([col.is_sorted() for col in self.columns])
+
+    def _judge_move_type(self, to_index: int) -> MoveType:
+        to_col = self.columns[to_index]
+        to_color, _ = to_col.get_top_elements()
+        if to_color is EColors.NONE:
+            # empty column
+            return MoveType.TO_EMPTY
+
+        if to_col.is_single_color():
+            return MoveType.TO_SINGLE_COLOR
+        return MoveType.NORMAL
 
     def __len__(self) -> int:
         return len(self.columns)
@@ -80,7 +103,7 @@ if __name__ == "__main__":
     cols = [
         (EColors.RED, EColors.BLUE, EColors.RED, EColors.BLUE),
         (EColors.BLUE, EColors.RED, EColors.BLUE, EColors.RED),
-        (EColors.NONE, ) * 4
+        (EColors.NONE,) * 4
     ]
 
     board = Board(cols)

@@ -30,9 +30,14 @@ class DFSResult:
 
 def dfs(start_node: Any,
         is_goal_func: Callable[[Any], bool],
-        get_branch_func: Callable[[Any], Set[Any]]) -> DFSResult:
+        get_branch_func: Callable[[Any], Set[Any]],
+        sort_node_func: Callable[[Any], int] = None) -> DFSResult:
     node_stack = [start_node]
     explored_nodes: Set[ParentChild] = set()
+
+    if sort_node_func is None:
+        sort_node_func = lambda x:0
+
     c = 0
     while len(node_stack) != 0:
         current_node = node_stack.pop()
@@ -47,7 +52,8 @@ def dfs(start_node: Any,
         branches = set(new_explored) - explored_nodes
 
         explored_nodes = explored_nodes | branches
-        node_stack = node_stack + [branch.child for branch in branches]
+        push_stacklet = sorted([branch.child for branch in branches], key=sort_node_func)
+        node_stack = node_stack + push_stacklet
     else:
         # Not Found
         print("Path is not found")

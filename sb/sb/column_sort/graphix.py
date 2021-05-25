@@ -29,9 +29,9 @@ def show_board(boards: List[Board]):
     plot_board(ax_board, boards[path_index], nums, num_offsets, path_index)
 
     # draw button
-    ax_btn_back = fig.add_axes([0.1, 0.02, 0.4, 0.03])
+    ax_btn_back = fig.add_axes([0.1, 0.02, 0.4, 0.04])
     button_back = Button(ax_btn_back, "<", color="limegreen", hovercolor='0.9')
-    ax_btn_prog = fig.add_axes([0.5, 0.02, 0.4, 0.03])
+    ax_btn_prog = fig.add_axes([0.5, 0.02, 0.4, 0.04])
     button_prog = Button(ax_btn_prog, ">", color="limegreen", hovercolor='0.9')
 
     def update_back(event):
