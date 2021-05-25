@@ -30,7 +30,7 @@ class EColors(Enum):
         if self == self.ORANGE:
             return "orange"
         if self == self.YELLOW:
-            return "y"
+            return "gold"
         if self == self.GREEN:
             return "g"
         if self == self.LIGHT_GREEN:
