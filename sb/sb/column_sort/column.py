@@ -50,6 +50,9 @@ class Column:
             return True
         if len(self) != self.LEN:
             return False
+        return self.is_single_color()
+
+    def is_single_color(self) -> bool:
         return len(set(self.elements)) == 1
 
     def __len__(self):

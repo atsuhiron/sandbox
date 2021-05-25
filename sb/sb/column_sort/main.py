@@ -55,5 +55,7 @@ if __name__ == "__main__":
     origin_board.initial_check()
 
     res = dfs.dfs(origin_board, is_end, get_branch)
+    print("status: {}".format(res.status))
+    print("search num: {}".format(res.c))
 
     graphix.show_board(res.path)
