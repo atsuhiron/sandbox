@@ -7,9 +7,6 @@ from sb.column_sort.board import Board
 import sb.column_sort.graphix as graphix
 import sb.column_sort.depth_first_search as dfs
 
-import importlib
-importlib.reload(graphix)
-
 
 def get_branch(board: Board) -> Set[Board]:
     movable_list: List[Tuple[int, int]] = board.list_up_all_movable_pair()
