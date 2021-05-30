@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import sb.particle.graphic_path_manager as gpm
+import importlib
 
 sh = (5, 5)
 #dens = np.arange(sh[0]*sh[1], dtype=np.float64).reshape(sh)
@@ -33,11 +35,13 @@ def calc_d_dens(dens, temp, k_move):
     return d_dens * (-k_move)
 
 
-dens_log = np.zeros(200)
-for ii in range(200):
-    d_dens = calc_d_dens(dens, temp, k_move)
-    dens += d_dens
-    dens_log[ii] = dens.mean()
-
-plt.plot(dens_log)
-plt.show()
+importlib.reload(gpm)
+man = gpm.GraphicPathManager("playground")
+if not man.has_frames():
+    for ii in range(200):
+        d_dens = calc_d_dens(dens, temp, k_move)
+        dens += d_dens
+        plt.imshow(dens, cmap="gist_ncar", vmin=0, vmax=10)
+        plt.savefig(man.get_frame_path(ii))
+        plt.cla()
+man.gen_mov()
