@@ -9,6 +9,7 @@ dens = np.zeros(sh, dtype=np.float64); dens[2, 2] = 10
 temp = np.ones(sh)
 k_move = 0.1
 
+
 def calc_d_dens(dens, temp, k_move):
     pres = dens * temp
 
