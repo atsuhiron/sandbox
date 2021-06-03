@@ -28,13 +28,13 @@ class ParticleField:
             sh_str = " {}, {}".format(temp.shape, self.f_prof.field_shape)
             assert False, "The shape of initial temperature and one of field profile is inconsistent:" + sh_str
 
-        self.dens = density
+        self.num_dens = density
         self.temp = temp
 
     def calc_force_p(self) -> np.ndarray:
         # ベクトル量なので、(shape_y, shape_y, 4) の形にしたい
         # 最後の 4 は [up, right, left, bottom] = [up, right, -right, -top]
-        press = physical_eq.get_pres(self.dens, self.temp)  # shape == (x, y)
+        press = physical_eq.get_pres(self.num_dens, self.temp)  # shape == (x, y)
         _d_press_y = press[1:] - press[:-1]
         _d_press_x = press[:, 1:] - press[:, :-1]
 

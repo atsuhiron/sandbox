@@ -4,7 +4,7 @@ import sb.particle.graphic_path_manager as gpm
 import importlib
 
 sh = (5, 5)
-#dens = np.arange(sh[0]*sh[1], dtype=np.float64).reshape(sh)
+#num_dens = np.arange(sh[0]*sh[1], dtype=np.float64).reshape(sh)
 dens = np.zeros(sh, dtype=np.float64); dens[2, 2] = 10
 temp = np.ones(sh)
 k_move = 0.1
