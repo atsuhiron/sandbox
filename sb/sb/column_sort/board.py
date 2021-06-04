@@ -5,7 +5,7 @@ import collections
 
 from sb.column_sort.color import EColors
 from sb.column_sort.column import Column
-from sb.column_sort.MoveType import MoveType
+from sb.column_sort.move_type import MoveType
 
 
 class Board:

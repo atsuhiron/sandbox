@@ -6,7 +6,7 @@ from sb.column_sort.color import EColors
 from sb.column_sort.board import Board
 import sb.column_sort.graphix as graphix
 import sb.column_sort.depth_first_search as dfs
-from sb.column_sort.MoveType import MoveType
+from sb.column_sort.move_type import MoveType
 
 
 def get_branch(board: Board) -> Set[Board]:
