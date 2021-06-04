@@ -21,7 +21,6 @@ class ParticleField:
                  temp: np.ndarray):
         self.p_prof = p_prof
         self.f_prof = f_prof
-        self.g_pot_filter = self._gen_gravity_potential_filter()
 
         if density.shape != self.f_prof.field_shape:
             sh_str = " {}, {}".format(density.shape, self.f_prof.field_shape)
@@ -31,6 +30,7 @@ class ParticleField:
             assert False, "The shape of initial temperature and one of field profile is inconsistent:" + sh_str
 
         self.shape = self.f_prof.field_shape
+        self.g_pot_filter = self._gen_gravity_potential_filter()
         self.num_dens = density
         self.temp = temp
 

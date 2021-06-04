@@ -4,6 +4,10 @@ import glob
 from typing import List
 import subprocess
 
+import matplotlib.pyplot as plt
+import numpy as np
+
+from sb.particle.particle_field import ParticleField
 
 class GraphicPathManager:
     BASE_PATH = "sb/particle/"
@@ -39,6 +43,15 @@ class GraphicPathManager:
 
     def get_all_exist_frame_path(self) -> List[str]:
         return glob.glob(self.frame_dir + "*." + self.IMG_EXT)
+
+    def save_frame(self, index: int, ar: np.ndarray, **imshow_kw):
+        """
+        デバッグ用なのでそのうち消します
+        """
+        plt.imshow(ar, **imshow_kw)
+        plt.colorbar()
+        plt.savefig(self.get_frame_path(index))
+        plt.close()
 
     def gen_mov(self, in_fps: int = 30, out_fps: int = 30):
         com_temp = "ffmpeg -r {0} -i {1} -vcodec libx264 -pix_fmt yuv420p -r {2} {3}"

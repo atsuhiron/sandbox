@@ -8,4 +8,4 @@ def get_pres(density: np.ndarray, temperature: np.ndarray) -> np.ndarray:
     """
     return density * temperature * 8.314462
 
-G = 1e-4
+G = 1e-6
