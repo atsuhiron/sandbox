@@ -34,9 +34,7 @@ class ParticleField:
         self.num_dens = density
         self.temp = temp
 
-    def calc_force_p(self) -> np.ndarray:
-        # ベクトル量なので、(shape_y, shape_y, 4) の形にしたい
-        # 最後の 4 は [up, right, left, bottom] = [up, right, -right, -top]
+    def calc_force_p(self) -> np.ndarray:  # (x, y, 4)
         press = physical_eq.get_pres(self.num_dens, self.temp)  # shape == (x, y)
         d_press = self._calc_delta(press)
 
@@ -50,21 +48,32 @@ class ParticleField:
             d_press[:, -1, 3] = press[:, -1]
         return -d_press * self.p_prof.moveability
 
-    def calc_force_g(self) -> np.ndarray:
+    def calc_force_g(self) -> np.ndarray:  # (x, y, 4)
         mass_dens = self.p_prof.mass * self.num_dens
         g_pot = ss.convolve2d(mass_dens, self.g_pot_filter, mode="same", boundary="fill", fillvalue=0.0)
         d_g_pot = self._calc_delta(g_pot)
         return d_g_pot
+
+    def calc_d_dens(self) -> np.ndarray:  # (x, y)
+        d_g_pot = self.calc_force_g()
+        d_dens_grav_pos = d_g_pot
+        d_dens_grav_pos[d_dens_grav_pos < 0] = 0
+        d_dens_grav_neg = -np.sum(d_dens_grav_pos, axis=2)
+        # ポテンシャルのgradient
+        # それぞれの向きの力
+        # 定数をかけて移動
+        # の順でやる。gradient がおかしいので確認
+        return self.calc_force_p()
 
     def _calc_delta(self, array2d: np.ndarray) -> np.ndarray:
         _d_array2d_y = array2d[1:] - array2d[:-1]
         _d_array2d_x = array2d[:, 1:] - array2d[:, :-1]
 
         d_array2d = np.zeros(shape=self.shape + (4,), dtype=np.float64)
-        d_array2d[1:, :, 0] = _d_array2d_y
-        d_array2d[:-1, :, 1] = -_d_array2d_y
-        d_array2d[:, 1:, 2] = _d_array2d_x
-        d_array2d[:, :-1, 3] = -_d_array2d_x
+        d_array2d[1:, :, 0] = _d_array2d_y  # top
+        d_array2d[:-1, :, 1] = -_d_array2d_y  # bottom
+        d_array2d[:, 1:, 2] = _d_array2d_x  # left
+        d_array2d[:, :-1, 3] = -_d_array2d_x  #right
         return d_array2d
 
     def _gen_gravity_potential_filter(self) -> np.ndarray:

@@ -44,7 +44,7 @@ class GraphicPathManager:
     def get_all_exist_frame_path(self) -> List[str]:
         return glob.glob(self.frame_dir + "*." + self.IMG_EXT)
 
-    def save_frame(self, index: int, ar: np.ndarray, **imshow_kw):
+    def save_frame(self, index: int, ar: np.ndarray, imshow_kw: dict):
         """
         デバッグ用なのでそのうち消します
         """
@@ -54,6 +54,8 @@ class GraphicPathManager:
         plt.close()
 
     def gen_mov(self, in_fps: int = 30, out_fps: int = 30):
+        if os.path.exists(self.get_mov_path()):
+            os.remove(self.get_mov_path())
         com_temp = "ffmpeg -r {0} -i {1} -vcodec libx264 -pix_fmt yuv420p -r {2} {3}"
         com = com_temp.format(in_fps,
                               self.frame_dir + self.F_NAME.format("%0" + str(self.order) + "d"),
