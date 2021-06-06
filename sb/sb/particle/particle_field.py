@@ -29,7 +29,7 @@ class ParticleField:
             sh_str = " {}, {}".format(temp.shape, self.f_prof.field_shape)
             assert False, "The shape of initial temperature and one of field profile is inconsistent:" + sh_str
 
-        self.shape = self.f_prof.field_shape
+        self.shape: Tuple[int, int] = self.f_prof.field_shape
         self.g_pot_filter = self._gen_gravity_potential_filter()
         self.num_dens = density
         self.temp = temp
@@ -54,11 +54,19 @@ class ParticleField:
         d_g_pot = self._calc_delta(g_pot)
         return d_g_pot
 
-    def calc_d_dens(self) -> np.ndarray:  # (x, y)
+    def calc_d_dens(self, dens: np.ndarray = None) -> np.ndarray:  # (x, y)
+        if dens is None:
+            dens = self.num_dens  # (x, y)
+
         d_g_pot = self.calc_force_g()
-        d_dens_grav_pos = d_g_pot
-        d_dens_grav_pos[d_dens_grav_pos < 0] = 0
-        d_dens_grav_neg = -np.sum(d_dens_grav_pos, axis=2)
+        d_dens_grav_neg = d_g_pot
+        d_dens_grav_neg[d_dens_grav_neg > 0] = 0
+        d_dens_grav_pos = -d_dens_grav_neg
+        d_dens = np.zeros(self.shape, dtype=np.float64)
+
+        for ii in range(4): #  top, bottom, left, right
+            move = d_dens_grav_pos[:, :, ii] * dens * 0.1
+
         # ポテンシャルのgradient
         # それぞれの向きの力
         # 定数をかけて移動
@@ -77,8 +85,14 @@ class ParticleField:
         return d_array2d
 
     def _gen_gravity_potential_filter(self) -> np.ndarray:
-        dist_x, dist_y = np.meshgrid(self._get_distance_array(self.shape[1]),
-                                     self._get_distance_array(self.shape[0]))
+        filt_shape = list(self.shape)
+        if filt_shape[0] % 2 == 0:
+            filt_shape[0] += 1
+        if filt_shape[1] % 2 == 0:
+            filt_shape[1] += 1
+
+        dist_x, dist_y = np.meshgrid(self._get_distance_array(filt_shape[1]),
+                                     self._get_distance_array(filt_shape[0]))
         inv_dist = np.sqrt(dist_x * dist_x + dist_y * dist_y)
         inv_dist[inv_dist == 0] = 0.5
         return -physical_eq.G / inv_dist
