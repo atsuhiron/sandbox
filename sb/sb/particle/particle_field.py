@@ -55,23 +55,32 @@ class ParticleField:
         return d_g_pot
 
     def calc_d_dens(self, dens: np.ndarray = None) -> np.ndarray:  # (x, y)
+        moving_ratio = 0.5
         if dens is None:
             dens = self.num_dens  # (x, y)
 
+        #  calc gravity
         d_g_pot = self.calc_force_g()
         d_dens_grav_neg = d_g_pot
         d_dens_grav_neg[d_dens_grav_neg > 0] = 0
-        d_dens_grav_pos = -d_dens_grav_neg
+        d_dens_grav_pos = np.abs(d_dens_grav_neg)
         d_dens = np.zeros(self.shape, dtype=np.float64)
 
-        for ii in range(4): #  top, bottom, left, right
-            move = d_dens_grav_pos[:, :, ii] * dens * 0.1
+        # The part of increase due to inflow.
+        inflow = d_dens_grav_pos * dens[:, :, np.newaxis] * moving_ratio
+        d_dens[:-1] += inflow[1:, :, 0]  # up
+        d_dens[1:] += inflow[:-1, :, 1]  # down
+        d_dens[:, :-1] += inflow[:, 1:, 2]  # left
+        d_dens[:, 1:] += inflow[:, :-1, 3]  # right
 
-        # ポテンシャルのgradient
-        # それぞれの向きの力
-        # 定数をかけて移動
-        # の順でやる。gradient がおかしいので確認
-        return self.calc_force_p()
+        # The part of decrease due to outflow.
+        outflow = np.sum(d_dens_grav_neg, axis=2) * dens * moving_ratio
+        d_dens += outflow
+
+        #  calc pressure
+        d_dens += np.sum(self.calc_force_p(), axis=2)
+
+        return d_dens
 
     def _calc_delta(self, array2d: np.ndarray) -> np.ndarray:
         _d_array2d_y = array2d[1:] - array2d[:-1]
