@@ -12,6 +12,9 @@ import importlib
 importlib.reload(pf)
 importlib.reload(gpm)
 
+#  https://qiita.com/shotoyoo/items/43a49439899334c6516e
+#  確認する
+
 
 def draw_thread(arg: Tuple[gpm.GraphicPathManager, int, np.ndarray, dict]):
     gpm_man, index, array, imshow_kw = arg
@@ -41,7 +44,7 @@ if __name__ == "__main__":
     #     [1, 0, 0, 0, 0, 0, 2, 0],
     #     [0, 0, 0, 0, 0, 0, 0, 0],
     # ], dtype=np.float64)
-    init_dens = np.random.random((24, 24)) * 10
+    init_dens = np.random.random((128, 64)) * 10
     init_temp = np.ones_like(init_dens, dtype=np.float64) * 80
     f_prof = FieldProfile(init_dens.shape)
     p_prof = ParticleProfile(0, 50)
@@ -51,7 +54,7 @@ if __name__ == "__main__":
     NN = 500
     result_arr = np.zeros((NN, ) + init_dens.shape, dtype=np.float64)
     for ii in tqdm.tqdm(range(NN), desc="CALC"):
-        d_grav = particle_field.calc_force_g()
+        #d_grav = particle_field.calc_force_g()
         result_arr[ii] = particle_field.num_dens
         d_dens = particle_field.calc_d_dens(None)
         particle_field.num_dens += d_dens
@@ -62,5 +65,6 @@ if __name__ == "__main__":
     with tqdm.tqdm(total=NN) as tt:
         for _ in p_pool.imap_unordered(draw_thread, args_list, 4):
             tt.update(1)
+    p_pool.close()
     tt.close()
     man.gen_mov()
