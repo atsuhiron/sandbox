@@ -47,7 +47,7 @@ if __name__ == "__main__":
     init_dens = np.random.random((128, 64)) * 10
     init_temp = np.ones_like(init_dens, dtype=np.float64) * 80
     f_prof = FieldProfile(init_dens.shape)
-    p_prof = ParticleProfile(0, 50)
+    p_prof = ParticleProfile(moveability=0.05, mass=1)
 
     particle_field = pf.ParticleField(p_prof, f_prof, init_dens, init_temp)
 
