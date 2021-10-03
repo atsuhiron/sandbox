@@ -17,6 +17,8 @@ tqdm = "^4.60.0"
 opencv-python = "^4.5.1"
 ffmpeg-python = "^0.2.0"
 pycuda = "^2021.1"
+beautifulsoup4 = "^4.10.0"
+requests = "^2.26.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
