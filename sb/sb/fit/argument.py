@@ -42,3 +42,9 @@ class Argument:
 
     def get_depend_value(self, val: float) -> float:
         return self.depend_func(val)
+
+    def get_status(self) -> ArgStatus:
+        return self.status
+
+    def set_status(self, status: ArgStatus):
+        self.status = status
