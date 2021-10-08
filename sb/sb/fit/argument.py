@@ -29,7 +29,7 @@ class Argument:
         if bounds is None:
             self.bounds = np.array([-np.inf, np.inf])
         else:
-            self.bounds = bounds
+            self.bounds = np.array(bounds)
 
     def set_value(self, val: float):
         self.value = val
@@ -48,3 +48,17 @@ class Argument:
 
     def set_status(self, status: ArgStatus):
         self.status = status
+
+    def set_bound(self, lim_min: float = None, lim_max: float = None):
+        if (lim_min is not None) and (lim_max is not None):
+            if lim_min >= lim_max:
+                print("Invalid bound: lim_min({0}) is larger than lim_max({1})".format(lim_min, lim_max))
+                return
+
+        if lim_min is not None:
+            self.bounds[0] = lim_min
+        if lim_max is not None:
+            self.bounds[1] = lim_max
+
+    def get_bounds(self) -> np.ndarray:
+        return self.bounds

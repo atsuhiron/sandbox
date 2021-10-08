@@ -107,7 +107,21 @@ class Functions:
                     target_arg.set_depend_function(d_func)
 
     def show_param_config(self):
-        pass
+        template = "{func:<15s} {param:<8s} {stat:<8s} {val:>13e} [{lim_min:>13e}, {lim_max:>13e}]"
+        print("{0:^15s} {1:^8s} {2:^8s} {3:^13s} [{4:^13s}, {5:^13s}]"
+              .format("func", "param", "status", "value", "lim_min", "lim_max"))
+        print("=" * 78)
+        for ff in self.arg_dict:
+            shown_func = False
+            for pp in self.arg_dict[ff]:
+                param = self.arg_dict[ff][pp]
+                if shown_func:
+                    f_name = ""
+                else:
+                    f_name = ff
+                print(template.format(func=f_name, param=pp, stat=param.get_status().name, val=param.get_value(),
+                                      lim_max=param.get_bounds()[0], lim_min=param.get_bounds()[1]))
+                shown_func = True
 
     def _assign_args(self, *args):
         arg_index = 0
