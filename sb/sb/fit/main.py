@@ -21,9 +21,6 @@ class ExampleFunc(base_function.BaseFunction):
     def argument_names(self) -> List[str]:
         return ["a", "b", "c", "d", "e"]
 
-    def __init__(self):
-        super().__init__()
-
     def f(self, *args):
         return args[1] * args[0] ** 4 + \
                args[2] * args[0] ** 3 + \
@@ -115,6 +112,7 @@ class Functions:
                     print("Value is ignored.")
                 if d_func is not None:
                     target_arg.set_depend_function(d_func)
+        # No other statement is expected.
 
     def show_param_config(self):
         template = "{func:<15s} {param:<8s} {stat:<8s} {val:>13e} [{lim_min:>13e}, {lim_max:>13e}]"
