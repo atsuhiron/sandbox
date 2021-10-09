@@ -1,6 +1,7 @@
 from typing import Union
 from typing import Dict
 from typing import List
+from typing import Tuple
 from typing import Callable
 import matplotlib.pyplot as plt
 import numpy as np
@@ -45,10 +46,19 @@ class ExampleFuncSin(base_function.BaseFunction):
 
 
 class Functions:
-    def __init__(self, funcs: List[base_function.BaseFunction]):
+    def __init__(self, funcs: List[base_function.BaseFunction], xdata: np.ndarray, ydata:np.ndarray):
         self.funcs = funcs
         self._set_function_index()
         self.arg_dict = self._gen_arg_dict(self.funcs)
+        self.xdata = xdata
+        self.ydata = ydata
+
+    def optimize(self) -> Tuple[np.ndarray, np.ndarray]:
+        p0 = []
+        for i, f_name in enumerate(self.arg_dict):
+            init_param = [self.arg_dict[f_name][a_name].get_value() for a_name in self.arg_dict[f_name]]
+            p0 += init_param
+        return so.curve_fit(self.f, self.xdata, self.ydata, p0)
 
     def f(self, *args):
         variable = args[0]
@@ -185,13 +195,14 @@ if __name__ == "__main__":
     np.random.seed(213)
     _random = np.random.random(num)
     data = data_generator.gen_data(_random, -0.5) - 1
-
-    init_param = (0.01, 0.14, 0.0554, -0.1, -3)
-    func_1 = ExampleFunc()
-    fs = Functions([func_1])
-
     x = np.linspace(-2, 2, num)
-    opt_para, opt_cov = so.curve_fit(fs.f, x, data, p0=init_param)
+
+    init_param_1 = (0.001, 0.001, -0.02, -0.1, -0.3)
+    init_param_2 = (8e-03, 4.9)
+    func_1 = ExampleFunc()
+    func_2 = ExampleFuncSin()
+    fs = Functions([func_1, func_2], x, data)
+    opt_para, opt_cov = fs.optimize()
 
     y = fs.f(x, *opt_para)
     plt.plot(x, y, label="y")
