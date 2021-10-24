@@ -42,7 +42,7 @@ class ExampleFuncSin(base_function.BaseFunction):
         return args[1] * np.sin(args[2] * args[0])
 
 
-class Functions:
+class Optimizer:
     def __init__(self, funcs: List[base_function.BaseFunction], xdata: np.ndarray, ydata:np.ndarray):
         self.funcs = funcs
         self._set_function_index()
@@ -199,7 +199,7 @@ if __name__ == "__main__":
     init_param_2 = (8e-03, 4.9)
     func_1 = ExampleFunc()
     func_2 = ExampleFuncSin()
-    fs = Functions([func_1, func_2], x, data)
+    fs = Optimizer([func_1, func_2], x, data)
     opt_para, opt_cov = fs.optimize()
 
     y = fs.f(x, *opt_para)
