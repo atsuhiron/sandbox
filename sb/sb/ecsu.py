@@ -78,7 +78,7 @@ def calc_d_2d(array: np.ndarray) -> np.ndarray:
 def calc_d2_2d(array: np.ndarray) -> np.ndarray:
     grad_x2 = _calc_d_2d_x(_calc_d_2d_x(array))
     grad_y2 = _calc_d_2d_y(_calc_d_2d_y(array))
-    return grad_x2 +grad_y2
+    return grad_x2 + grad_y2
 
 
 # def calc_d2_1d(array: np.ndarray) -> np.ndarray:
