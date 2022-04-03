@@ -3,6 +3,8 @@ from typing import Tuple
 import itertools
 import abc
 import multiprocessing.pool as mp
+import random
+import copy
 
 from tqdm import tqdm
 from scipy.special import perm
@@ -46,7 +48,7 @@ class ELAFullSearch(ELABase):
 
         best_pattern = None
         best_score = float("inf")
-        #with mp.ThreadPool(20) as pool:
+        # with mp.ThreadPool(20) as pool:
         with mp.Pool(16) as pool:
             with tqdm(total=total) as pbar:
                 for res in pool.imap_unordered(
@@ -100,3 +102,100 @@ class ELAGreedySearch(ELABase):
             lightest_index = ELAGreedySearch.find_lightest_carrier_index(carrier)
             carrier[lightest_index].append(load)
         return ELAGreedySearch.evaluate_load(carrier), carrier
+
+
+class ELARandomGreedySearch(ELABase):
+    def search(self) -> Tuple[float, List[List[ILoad]]]:
+        n = 3
+        max_iter = self.num * len(self.load_list) * 10000
+        result_list = []
+        for _ in tqdm(range(n)):
+            random_loads = self._random_init()
+            moe_count = 0
+            score = ELARandomGreedySearch.evaluate_load(random_loads)
+            while moe_count < max_iter:
+                #moe = random.random() > 0.5
+                if True:
+                    moe_loads = self._move_load(random_loads)
+                else:
+                    moe_loads = self._exchange_load(random_loads)
+
+                moe_score = ELARandomGreedySearch.evaluate_load(moe_loads)
+                if moe_score < score:
+                    score = moe_score
+                    moe_count = 0
+                    random_loads = moe_loads
+                else:
+                    moe_count += 1
+            result_list.append((score, random_loads))
+        return min(result_list, key=lambda pair: pair[0])
+
+    def _random_load_nums(self) -> List[int]:
+        load_num = len(self.load_list)
+        max_load_on_a_carrier = load_num - self.num + 1
+
+        random_balanced_load_num = []
+        for ii in range(self.num - 1):
+            load_on_a_carrier = random.randint(1, max_load_on_a_carrier)
+            random_balanced_load_num.append(load_on_a_carrier)
+            max_load_on_a_carrier -= (load_on_a_carrier - 1)
+        random_balanced_load_num.append(load_num - sum(random_balanced_load_num))
+        return random_balanced_load_num
+
+    def _random_init(self) -> List[List[ILoad]]:
+        random_loads = copy.deepcopy(self.load_list)
+        random.shuffle(random_loads)
+
+        random_load_nums = self._random_load_nums()
+        carrier = [[] for _ in range(self.num)]
+        l_index = 0
+        for c in range(self.num):
+            for _ in range(random_load_nums[c]):
+                carrier[c].append(random_loads[l_index])
+                l_index += 1
+        return carrier
+
+    def _gen_from_to_index(self, carrier: List[List[ILoad]]) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+        from_c_index = -1
+        to_c_index = -1
+        from_c_has_load_more_than_1 = False
+        while not ((from_c_index != to_c_index) and from_c_has_load_more_than_1):
+            from_c_index = random.randint(0, self.num - 1)
+            to_c_index = random.randint(0, self.num - 1)
+            from_c_has_load_more_than_1 = len(carrier[from_c_index]) > 1
+
+        from_l_index = random.randint(0, len(carrier[from_c_index]) - 1)
+        to_l_index = random.randint(0, len(carrier[to_c_index]) - 1)
+        return (from_c_index, from_l_index), (to_c_index, to_l_index)
+
+    def _move_load(self, carrier: List[List[ILoad]]):
+        froms, tos = self._gen_from_to_index(carrier)
+        pop_load = carrier[froms[0]].pop(froms[1])
+        carrier[tos[0]].append(pop_load)
+        return carrier
+
+    def _exchange_load(self, carrier: List[List[ILoad]]):
+        froms, tos = self._gen_from_to_index(carrier)
+        pop_load1 = carrier[froms[0]].pop(froms[1])
+        pop_load2 = carrier[tos[0]].pop(tos[1])
+        carrier[tos[0]].append(pop_load1)
+        carrier[froms[0]].append(pop_load2)
+        return carrier
+
+
+if __name__ == "__main__":
+    import pprint
+    from sb.equal_load.load import SimpleLoad
+
+    ll = [SimpleLoad(load=16.253557774074658),
+          SimpleLoad(load=17.61833351439079),
+          SimpleLoad(load=193.46259669182442),
+          SimpleLoad(load=150.30559960567024),
+          SimpleLoad(load=15.013089710173572),
+          SimpleLoad(load=14.103840588683125),
+          SimpleLoad(load=16.865148941365117),
+          SimpleLoad(load=18.965240668296694),
+          SimpleLoad(load=15.060557413770358),
+          SimpleLoad(load=13.867308240998799)]
+    ela_rgs = ELARandomGreedySearch(3, ll)
+    ela_rgs.search()

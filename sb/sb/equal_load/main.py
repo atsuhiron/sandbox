@@ -22,12 +22,15 @@ if __name__ == "__main__":
     c_num = 3
     for _ in range(1):
         ll = gen_data(10, 1)
-        alg_full = ELAFullSearch(c_num, ll)
-        alg_greedy = ELAGreedySearch(c_num, ll)
-        score_f, best_ll_f = alg_full.search()
-        score_g, best_ll_g = alg_greedy.search()
-        gfx.show_load(best_ll_f)
-        gfx.show_load(best_ll_g)
-        # if not are_equivalent_loads(best_ll_f, best_ll_g):
-        #     show_2load(best_ll_f, best_ll_g)
+        # alg_full = ELAFullSearch(c_num, ll)
+        # alg_greedy = ELAGreedySearch(c_num, ll)
+        alg_r_greedy = ELARandomGreedySearch(c_num, ll)
+
+        # score_f, best_ll_f = alg_full.search()
+        # score_g, best_ll_g = alg_greedy.search()
+        score_r, best_ll_r = alg_r_greedy.search()
+
+        # gfx.show_load(best_ll_f)
+        # gfx.show_load(best_ll_g)
+        gfx.show_load(best_ll_r)
 
