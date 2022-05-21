@@ -40,17 +40,13 @@ def calc_steep(init_x: float, init_y: float, max_num: int) -> int:
     rec[0] = 0
     xy = np.zeros(2, dtype=np.float64)
     for ii in range(1, max_num):
-        try:
-            xy = _recurrence(xy, init_x, init_y)
-            rec[ii] = np.linalg.norm(xy)
-        except RuntimeWarning:
-            rec[ii] = np.nan
+        xy = _recurrence(xy, init_x, init_y)
+        norm = np.linalg.norm(xy)
+        rec[ii] = norm
+        if norm > 2.0:
             break
 
     rec = _remove_nan(rec)
-
-    if len(rec) < 3:
-        return np.nan
     return len(rec)
 
 
