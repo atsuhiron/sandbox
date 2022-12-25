@@ -2,7 +2,7 @@ import abc
 from typing import List
 from typing import Tuple
 import itertools as it
-
+import tqdm
 
 class Constraint(metaclass=abc.ABCMeta):
     def __init__(self, letter: str, loc: int):
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     ]
 
     cand = []
-    for _letters in it.product(alp_list, repeat=5):
+    for _letters in tqdm.tqdm(it.product(alp_list, repeat=5), total=len(alp_list)**5):
         w = reconstruct(_letters)
         if not is_ok(w, con_list):
             continue
