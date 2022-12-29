@@ -3,14 +3,14 @@ from typing import Any
 from typing import List
 from typing import Tuple
 import itertools as it
+import re
 
 from tqdm import tqdm
 
 
 class Constraint(metaclass=abc.ABCMeta):
     def __init__(self, letter: str, loc: int):
-        assert len(letter) == 1
-        assert 0 <= loc <= 4
+        self._check(letter, loc)
 
         self.letter = letter
         self.loc = loc
@@ -18,6 +18,13 @@ class Constraint(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def is_ok(self, word: str) -> bool:
         pass
+
+    @staticmethod
+    def _check(letter: str, loc: int):
+        assert len(letter) == 1
+        assert 0 <= loc <= 4
+        ret = re.match("[^a-z]", letter)
+        assert ret is None, f"Detected invalid letter: {letter}"
 
 
 class Yellow(Constraint):
