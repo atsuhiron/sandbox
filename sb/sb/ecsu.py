@@ -151,16 +151,16 @@ if __name__ == "__main__":
     # plt.savefig("sb/ecsufig/fig_{}.png".format(str(0).zfill(2)))
     # plt.clf()
 
-    for ii in tqdm(range(1, 61)):
+    for ii in tqdm(range(1, 100)):
         _ero = calc_erosion_2d(teran, 0.2, 0.4)
         _sed = calc_sediment_2d(teran, 0.5)
 
         diff = sn.gaussian_filter(_sed - _ero, 1, truncate=3.0)
         teran += diff
-    #     plt.title(str(ii))
-    #     plt.imshow(teran, **imshow_d)
-    #     plt.colorbar()
-    #     plt.savefig("sb/ecsufig/fig_{}.png".format(str(ii).zfill(2)))
-    #     plt.clf()
-    #
-    # os.system("ffmpeg -r 5 -i sb/ecsufig/fig_%2d.png -vcodec h264 -r 5 sb/mov.mp4")
+        plt.title(str(ii))
+        plt.imshow(teran, **imshow_d)
+        plt.colorbar()
+        plt.savefig("sb/ecsufig/fig_{}.png".format(str(ii).zfill(2)))
+        plt.clf()
+
+    os.system("ffmpeg -r 5 -i sb/ecsufig/fig_%2d.png -vcodec libx264 -pix_fmt yuv420p -r 5 sb/mov.mp4")
