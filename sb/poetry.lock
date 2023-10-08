@@ -474,6 +474,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "pyasn1"
+version = "0.5.0"
+description = "Pure-Python implementation of ASN.1 types and DER/BER/CER codecs (X.208)"
+category = "main"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,>=2.7"
+
+[[package]]
 name = "pycuda"
 version = "2021.1"
 description = "Python wrapper for Nvidia CUDA"
@@ -507,6 +515,18 @@ python-versions = ">=3.6.8"
 
 [package.extras]
 diagrams = ["railroad-diagrams", "jinja2"]
+
+[[package]]
+name = "pysmb"
+version = "1.2.9.1"
+description = "pysmb is an experimental SMB/CIFS library written in Python to support file sharing between Windows and Linux machines"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+pyasn1 = "*"
+tqdm = "*"
 
 [[package]]
 name = "pytest"
@@ -712,7 +732,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "38677ca3aa09cef5086b9c5236d049e8cbb9bd644eaeca6f64a0b125e24f022f"
+content-hash = "d5372bb86ea55ed9bbf55dda41cd84ac74d477d586bfb5909e288e589ac6fc85"
 
 [metadata.files]
 appdirs = [
@@ -1173,6 +1193,10 @@ py = [
     {file = "py-1.11.0-py2.py3-none-any.whl", hash = "sha256:607c53218732647dff4acdfcd50cb62615cedf612e72d1724fb1a0cc6405b378"},
     {file = "py-1.11.0.tar.gz", hash = "sha256:51c75c4126074b472f746a24399ad32f6053d1b34b68d2fa41e558e6f4a98719"},
 ]
+pyasn1 = [
+    {file = "pyasn1-0.5.0-py2.py3-none-any.whl", hash = "sha256:87a2121042a1ac9358cabcaf1d07680ff97ee6404333bacca15f76aa8ad01a57"},
+    {file = "pyasn1-0.5.0.tar.gz", hash = "sha256:97b7290ca68e62a832558ec3976f15cbf911bf5d7c7039d8b861c2a0ece69fde"},
+]
 pycuda = [
     {file = "pycuda-2021.1.tar.gz", hash = "sha256:ab87312d0fc349d9c17294a087bb9615cffcf966ad7b115f5b051008a48dd6ed"},
 ]
@@ -1183,6 +1207,9 @@ pygments = [
 pyparsing = [
     {file = "pyparsing-3.0.9-py3-none-any.whl", hash = "sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc"},
     {file = "pyparsing-3.0.9.tar.gz", hash = "sha256:2b020ecf7d21b687f219b71ecad3631f644a47f01403fa1d1036b0c6416d70fb"},
+]
+pysmb = [
+    {file = "pysmb-1.2.9.1.zip", hash = "sha256:ad613988d54b1317ca0466dc3546f47b2dddea16e645d755d29fb75a86903326"},
 ]
 pytest = [
     {file = "pytest-5.4.3-py3-none-any.whl", hash = "sha256:5c0db86b698e8f170ba4582a492248919255fcd4c79b1ee64ace34301fb589a1"},

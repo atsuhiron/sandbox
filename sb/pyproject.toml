@@ -19,6 +19,7 @@ beautifulsoup4 = "^4.10.0"
 requests = "^2.26.0"
 scipy = "^1.9.3"
 numba = "^0.57.0"
+pysmb = "^1.2.9"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
